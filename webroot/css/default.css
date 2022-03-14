@@ -1,0 +1,59 @@
+body{
+    background-color: #f8f9fa;
+}
+
+.login-info{
+    margin-top: 10px;
+}
+
+.flash-msg{
+    margin-top: 20px;
+}
+
+.title-holder{
+    height: 100px;
+    padding-top: 10px;
+}
+
+.small-col{
+    width: 10%;
+}
+
+.squeeze{
+    width: 90px;
+    white-space: nowrap;
+}
+
+.movie-link{
+    text-decoration: none;
+}
+
+.cover-container {
+    height: 180px;
+    width: 100%;
+    white-space: nowrap;
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
+.cover-item {
+    position: relative;
+    display: inline-block;
+    margin: 8px 16px 8px 0;
+    box-shadow: 2px 2px 4px #bbb;    
+    width: 116px;
+    height: 158px;
+    vertical-align: bottom;
+    background-position: top left;
+    background-repeat: no-repeat;
+    background-size: cover;
+    cursor: pointer;
+}
+
+.table-card{
+    margin-bottom: 0;
+}
+
+.back-btn{
+    text-decoration: none;
+    color: #212529;
+}
