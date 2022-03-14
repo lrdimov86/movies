@@ -13,7 +13,7 @@ mindgeek_test.sql
 ````
 Use this file to create the test database
 
-In /config/app.php make sure to set the correct database credentials TEST database
+In /config/app.php make sure to set the correct database credentials for the TEST database
 
 ## Starting
 Fastest way to get the project up and running is by running
