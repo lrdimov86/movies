@@ -5,7 +5,7 @@ namespace App\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
-use Lib\MovieParser;
+use Lib\ImageCacher;
 use Cake\Utility\Inflector;
 use Cake\Utility\Hash;
 
@@ -21,7 +21,8 @@ class MoviesComponent extends Component
      */
     protected $_defaultConfig = [
         'url'=>null,
-        'format'=>'json'
+        'format'=>'json',
+        'data'=>null
     ];
 
     /**
@@ -55,14 +56,14 @@ class MoviesComponent extends Component
     }
 
     public function fetchJsonStream(){
-        $json = file_get_contents($this->_config['url']);
+        $this->setStream();
+        $json = $this->stream;
 
         if(!$this->isStringUtf8($json)){            
             $json = utf8_encode($json);
         }
 
         $stream = json_decode($json,true);        
-
         return $stream;
     }
 
@@ -71,7 +72,11 @@ class MoviesComponent extends Component
     }
 
     public function setStream(){
-        $this->stream = $this->fetchStream();
+        if($this->_config['data']==null){
+            $this->stream = file_get_contents($this->_config['url']);
+        }else{            
+            $this->stream = $this->_config['data'];
+        }
     }
 
     public function fetchList($page=1, $offset=10){
@@ -157,7 +162,7 @@ class MoviesComponent extends Component
         $moviePath = WWW_ROOT."img/{$id}";        
         $cachedFiles = [];
 
-        $hashedFolderName = MovieParser::hashFilePaths(Hash::extract($images,'{n}.url'));
+        $hashedFolderName = ImageCacher::hashFilePaths(Hash::extract($images,'{n}.url'));
         $folderPath = "{$moviePath}/{$folder}/{$hashedFolderName}";
 
         if (file_exists($folderPath)) {
@@ -170,7 +175,7 @@ class MoviesComponent extends Component
             return $cachedFiles;
         }
 
-        return MovieParser::cacheImages($images,$folder,$id);
+        return ImageCacher::cacheImages($images,$folder,$id);
     }
 
     public function whereToWatch($movie){
@@ -178,12 +183,14 @@ class MoviesComponent extends Component
             return '';
         }
 
+        $viewingWindow = $movie['viewingWindow'];
+
         $wayToWatch = isset($viewingWindow['wayToWatch'])?$viewingWindow['wayToWatch']:'';
         if($wayToWatch == ''){
             return '';
         }
 
-        $watchString = "On {$movie['wayToWatch']}";
+        $watchString = "On {$viewingWindow['wayToWatch']}";
 
         $startDate = isset($viewingWindow['startDate'])?date('d F Y',strtotime($viewingWindow['startDate'])):'';
         if($startDate != ''){
