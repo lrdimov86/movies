@@ -36,7 +36,7 @@ class ImageCacherTest extends TestCase
 
 
     /**
-     * Test hashFilePaths method
+     * Test if hashFilePaths method return 32 character string containing lowercase letters and numbers
      *
      * @return void
      * @uses \Lib\ImageCacher::hashFilePaths()

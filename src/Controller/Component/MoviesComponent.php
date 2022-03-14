@@ -33,7 +33,7 @@ class MoviesComponent extends Component
     protected $_config = [];
 
     /**
-     * JSON array with movies.
+     * JSON string with movies.
      *
      * @var array
      */
@@ -42,7 +42,7 @@ class MoviesComponent extends Component
     /**
      * Sets up the component by initialing instance variables.
      *
-     * @param Controller $controller
+     * @param array $config
      */
     public function initialize(array $config):void
     {
@@ -55,6 +55,11 @@ class MoviesComponent extends Component
         }
     }
 
+    /**
+     * Decodes the JSON string in $stream var and returns an array
+     * 
+     * @return array
+     */
     public function fetchJsonStream(){
         $this->setStream();
         $json = $this->stream;
@@ -63,14 +68,25 @@ class MoviesComponent extends Component
             $json = utf8_encode($json);
         }
 
-        $stream = json_decode($json,true);        
-        return $stream;
+        return json_decode($json,true);
     }
 
+    /**
+     * Return 1 if $string has utf-8 encoding, otherwise returns null 
+     * 
+     * @param string $string
+     * @return null|1
+     */
     public function isStringUtf8($string){
         return preg_match('//u', $string);
     }
 
+    /**
+     * Populates $stream var with either JSON string from initials configuration(takes precedence) or response from 
+     * url in configuration
+     * 
+     * @return void
+     */
     public function setStream(){
         if($this->_config['data']==null){
             $this->stream = file_get_contents($this->_config['url']);
@@ -79,6 +95,13 @@ class MoviesComponent extends Component
         }
     }
 
+    /**
+     * Parses movies array into a nicely formatted array and limits numbers of movies based on $page and $offset
+     * 
+     * @param int $page
+     * @param int $offset
+     * @return array
+     */
     public function fetchList($page=1, $offset=10){
         $data = $this->fetchStream();
         
@@ -103,6 +126,12 @@ class MoviesComponent extends Component
         ];
     }
 
+    /**
+     * Returns an array containing all details about a single movie specified by $id
+     * 
+     * @param string $id
+     * @return void
+     */
     public function fetchMovie($id){
         $data = $this->fetchStream();
                 
@@ -118,6 +147,12 @@ class MoviesComponent extends Component
         return $details;
     }
 
+    /**
+     * Parses an entry from the movies array into a more easily digestible format
+     * 
+     * @param array $movie
+     * @return array
+     */
     public function buildMovieDetails($movie){
         $id = $movie['id'];
         $quote = isset($movie['quote'])?$movie['quote']:'';
@@ -146,6 +181,12 @@ class MoviesComponent extends Component
         return $details;
     }
 
+    /**
+     * Takes seconds in the form of a integer and returns string containing hours and minutes
+     * 
+     * @param int $seconds
+     * @return string
+     */
     public function humanizeDuration($seconds){
         $hours = gmdate('g',$seconds);
         $minutes = gmdate('i',$seconds);
@@ -158,6 +199,14 @@ class MoviesComponent extends Component
         return $humanizedDuration;
     }
 
+    /**
+     * Checks if images referenced in a movie entry have been cached. If we find cached images we return url paths to 
+     * the cached images. If we can not find cached images, we download them abd the return the cached image urls.
+     * 
+     * @param array $images
+     * @param string $folder
+     * @param string $id
+     */
     public function fetchImages($images,$folder,$id){
         $moviePath = WWW_ROOT."img/{$id}";        
         $cachedFiles = [];
@@ -178,6 +227,12 @@ class MoviesComponent extends Component
         return ImageCacher::cacheImages($images,$folder,$id);
     }
 
+    /**
+     * Parses viewingWindow array into a string
+     * 
+     * @param array $movie
+     * @return string
+     */
     public function whereToWatch($movie){
         if(!isset($movie['viewingWindow'])){
             return '';

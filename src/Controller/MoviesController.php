@@ -5,8 +5,7 @@ namespace App\Controller;
 
 /**
  * Movies Controller
- *
- * @method \App\Model\Entity\Movie[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ * 
  */
 class MoviesController extends AppController
 {
@@ -17,9 +16,9 @@ class MoviesController extends AppController
     }
 
     /**
-     * Index method
+     * Retrieves all movies from JSON string 10 at a time
      *
-     * @return \Cake\Http\Response|null|void Renders view
+     * @return void
      */
     public function index()
     {
@@ -32,11 +31,10 @@ class MoviesController extends AppController
     }
 
     /**
-     * Details method
+     * Displays a detailed view of a movie
      *
-     * @param string|null $id Movie id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @param string $id
+     * @return void     
      */
     public function details($id)
     {
